@@ -66,6 +66,7 @@ const scrollTo = async (sel) => {
 
 await send("Page.navigate", { url: fileUrl });
 await new Promise((r) => setTimeout(r, 600));
+await send("Runtime.evaluate", { expression: "try{history.scrollRestoration='manual'}catch(e){}" });
 await send("Runtime.evaluate", { expression: "try{localStorage.clear()}catch(e){}" });
 await send("Page.navigate", { url: fileUrl });
 await new Promise((r) => setTimeout(r, 1200));
