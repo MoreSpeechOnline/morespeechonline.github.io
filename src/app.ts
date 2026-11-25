@@ -828,10 +828,18 @@ function boot(): void {
     save();
   });
 
-  renderLetter();
   wireLetter();
+  const paintRest = (): void => {
+    renderLetter();
+    renderEvidence();
+  };
+  if ("requestIdleCallback" in window) {
+    (window as Window & { requestIdleCallback: (cb: () => void, o?: { timeout: number }) => void })
+      .requestIdleCallback(paintRest, { timeout: 1200 });
+  } else {
+    setTimeout(paintRest, 60);
+  }
   wireShare();
-  renderEvidence();
 
   document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
     a.addEventListener("click", (ev) => {

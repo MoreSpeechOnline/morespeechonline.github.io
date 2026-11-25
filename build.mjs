@@ -50,6 +50,20 @@ const bundled = execFileSync(
 
 const js = bundled;
 
+// Minify the stylesheet and collapse inter-tag whitespace in the final page.
+// GitHub Pages gzips the result, so the win is parse time as much as bytes.
+const minCss = execFileSync(esbuild, ["--minify", "--loader=css"], {
+  input: readFileSync(join(here, "src", "styles.css"), "utf8"),
+  encoding: "utf8",
+});
+
+const minifyHtml = (html) =>
+  html
+    .replace(/<!--(?!\[if)[\s\S]*?-->/g, "")
+    .replace(/>\s+</g, "><")
+    .replace(/\s{2,}/g, " ")
+    .replace(/> </g, "><");
+
 // Emit the Markdown letter from the same data the page renders, so the two
 // can never disagree. Node cannot import TypeScript directly, so esbuild
 // transpiles letter.ts to a temporary ES module first.
@@ -62,10 +76,11 @@ const md = letterMarkdown();
 writeFileSync(join(here, "docs", "open-letter.md"), md);
 rmSync(letterTmp, { force: true });
 console.log(`wrote docs/open-letter.md (${md.split("\n").length} lines)`);
-const css = readFileSync(join(here, "src", "styles.css"), "utf8");
 const template = readFileSync(join(here, "src", "index.template.html"), "utf8");
 
-const html = template.replace("/*__CSS__*/", () => css).replace("/*__JS__*/", () => js);
+const html = minifyHtml(
+  template.replace("/*__CSS__*/", () => minCss).replace("/*__JS__*/", () => js),
+);
 mkdirSync(here, { recursive: true });
 writeFileSync(join(here, "index.html"), html);
 rmSync(join(here, "dist"), { recursive: true, force: true });

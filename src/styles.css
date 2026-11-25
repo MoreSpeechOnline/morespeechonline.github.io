@@ -66,8 +66,7 @@ button { font: inherit; color: inherit; }
 
 .masthead {
   position: sticky; top: 0; z-index: 50;
-  backdrop-filter: saturate(140%) blur(14px);
-  background: rgba(251,248,243,.82);
+  background: rgba(251,248,243,.97);
   border-bottom: 1px solid var(--rule);
 }
 .masthead .wrap { display: flex; align-items: center; gap: 22px; height: 64px; }
@@ -650,8 +649,11 @@ footer { background: linear-gradient(180deg, transparent, rgba(20,17,15,.025)); 
 
 /* ---------- reveal ---------- */
 
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
-.reveal.in { opacity: 1; transform: none; }
+.js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+
+/* The generated-document pane is off-screen until the builder is used. */
+#docview { content-visibility: auto; contain-intrinsic-size: auto 1200px; }
 
 @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
