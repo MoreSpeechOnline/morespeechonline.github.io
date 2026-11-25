@@ -1,0 +1,15 @@
+{
+  "name": "morespeech",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Explains the First Amendment problem with federal officials blocking constituents, and generates court filings.",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node test/smoke.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "typescript": "^5.6.0"
+  }
+}

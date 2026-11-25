@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MoreSpeech — screenshots</title>
+<style>
+  :root { --ink:#14110f; --muted:#6b6259; --paper:#fbf8f3; --rule:#ddd4c6; --ox:#7a1f1f;
+          --serif: "Iowan Old Style", Palatino, Georgia, serif; --sans: ui-sans-serif, -apple-system, "Segoe UI", sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--serif); }
+  header { padding:40px 28px 18px; border-bottom:1px solid var(--rule); }
+  h1 { margin:0; font-size:32px; letter-spacing:-.02em; }
+  p.sub { margin:8px 0 0; color:var(--muted); font-family:var(--sans); font-size:14px; }
+  main { max-width:1100px; margin:0 auto; padding:28px; display:grid; gap:28px; }
+  figure { margin:0; }
+  img { width:100%; border:1px solid var(--rule); display:block; background:#fff; }
+  figcaption { font-family:var(--sans); font-size:13px; color:var(--muted); margin-top:8px; }
+  figcaption b { color:var(--ink); font-weight:600; }
+  .narrow img { max-width:390px; margin:0 auto; }
+</style>
+</head>
+<body>
+<header>
+  <h1>MoreSpeech — screenshots</h1>
+  <p class="sub">morespeech.online · captured at 1440×900 unless noted · generated from the built single-page app</p>
+</header>
+<main id="gallery"></main>
+<script>
+const shots = [
+  ["01-hero", "Hero", "The claim, a mock post with one critic blocked, and the doctrinal tagline."],
+  ["02-argument", "The argument", "Five links; each opens to the authority behind it."],
+  ["03-record", "The record", "22 coded suits, five merits wins, no damages awards."],
+  ["04-defenses", "The defenses", "The Speech or Debate answer, opened."],
+  ["05-letter", "The letter", "The open letter to the Attorney General, in full."],
+  ["05b-about", "About", "The ministry, the profile as it appears on X, and how to send a gift."],
+  ["05c-ethics", "Code of Ethics", "The SQLite code, reproduced in full."],
+  ["06-builder-step1", "Builder · step 1", "You — with the live caption preview."],
+  ["07-step1-filled", "Builder · step 1 filled", "The caption updates as you type."],
+  ["08-step2-official", "Builder · step 2", "The Member and the federal district."],
+  ["09-step3-account", "Builder · step 3", "The indicia that make an account official."],
+  ["10-step4-events", "Builder · step 4", "Your words, quoted exactly."],
+  ["11-step5-evidence", "Builder · step 5", "A screenshot uploaded and lettered Exhibit A."],
+  ["12-step6-options", "Builder · step 6", "Which documents to generate."],
+  ["13-generated-complaint", "Generated", "The complaint, in court formatting."],
+  ["14-exhibit-page", "Exhibit", "The exhibit page with the embedded capture."],
+  ["15-share-prompt", "Share", "The post the app drafts for you."],
+  ["16-mobile-hero", "Mobile", "390px wide."],
+];
+const main = document.getElementById("gallery");
+for (const [file, title, note] of shots) {
+  const fig = document.createElement("figure");
+  if (file === "16-mobile-hero") fig.className = "narrow";
+  fig.innerHTML = `<img src="${file}.png" alt="${title}" loading="lazy">
+    <figcaption><b>${title}.</b> ${note}</figcaption>`;
+  main.appendChild(fig);
+}
+</script>
+</body>
+</html>
