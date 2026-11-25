@@ -53,16 +53,17 @@ const js = bundled;
 // Minify the stylesheet and collapse inter-tag whitespace in the final page.
 // GitHub Pages gzips the result, so the win is parse time as much as bytes.
 const minCss = execFileSync(esbuild, ["--minify", "--loader=css"], {
-  input: readFileSync(join(here, "src", "styles.css"), "utf8"),
+  input:
+    readFileSync(join(here, "src", "font.css"), "utf8") +
+    readFileSync(join(here, "src", "styles.css"), "utf8"),
   encoding: "utf8",
 });
 
 const minifyHtml = (html) =>
   html
     .replace(/<!--(?!\[if)[\s\S]*?-->/g, "")
-    .replace(/>\s+</g, "><")
-    .replace(/\s{2,}/g, " ")
-    .replace(/> </g, "><");
+    .replace(/>\s+<(?!\/?span)/g, "><")
+    .replace(/\s{2,}/g, " ");
 
 // Emit the Markdown letter from the same data the page renders, so the two
 // can never disagree. Node cannot import TypeScript directly, so esbuild
@@ -83,5 +84,17 @@ const html = minifyHtml(
 );
 mkdirSync(here, { recursive: true });
 writeFileSync(join(here, "index.html"), html);
+
+// The two static pages carry the same stylesheet so the world does not break
+// when a reader follows a link out of the app.
+for (const page of ["about.html", "code-of-ethics.html"]) {
+  const file = join(here, page);
+  const src = readFileSync(file, "utf8");
+  const first = src.indexOf("<style>");
+  const close = src.indexOf("</style>", first);
+  if (first === -1 || close === -1) continue;
+  const rebuilt = src.slice(0, first + 7) + minCss + src.slice(close);
+  writeFileSync(file, rebuilt);
+}
 rmSync(join(here, "dist"), { recursive: true, force: true });
 console.log(`wrote site/index.html (${(html.length / 1024).toFixed(1)} KiB)`);

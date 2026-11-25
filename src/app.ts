@@ -76,7 +76,6 @@ function renderChain(): void {
     <article class="step reveal">
       <div class="step-rail"><span class="step-num">${s.num}</span></div>
       <div class="step-main">
-        <span class="kicker">${s.kicker}</span>
         <h3>${s.title}</h3>
         <p class="step-lede">${s.lede}</p>
         <button class="disclose" type="button" aria-expanded="false" aria-controls="body-${s.id}">
