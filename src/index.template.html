@@ -18,10 +18,16 @@
 </head>
 <body>
 
+<div class="progress" id="progress" aria-hidden="true"></div>
+<a class="skip" href="#argument">Skip to content</a>
+
 <header class="masthead">
   <div class="wrap">
     <a class="wordmark" href="#top">More<em>Speech</em></a>
-    <nav class="nav" aria-label="Sections">
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">
+      <span class="bars" aria-hidden="true"></span> Menu
+    </button>
+    <nav class="nav" id="nav" aria-label="Sections">
       <a href="#argument">The argument</a>
       <a href="#record">The record</a>
       <a href="#defenses">The defenses</a>
@@ -39,7 +45,11 @@
     <div class="wrap hero-grid">
       <div>
         <p class="eyebrow">First Amendment · 42 U.S.C. § 1983 · 18 U.S.C. § 242</p>
-        <h1 class="display">The comment<br>section is a<br><i>public forum.</i></h1>
+        <h1 class="display">
+          <span class="line">The comment</span>
+          <span class="line">section is a</span>
+          <span class="line"><i>public forum.</i></span>
+        </h1>
         <p class="standfirst">A federal official opens her account to public comment, invites constituents to answer, and then blocks one of them for what they said. That is not moderation. <b>It is viewpoint discrimination — and the law has a name for it.</b></p>
         <div class="hero-actions">
           <a class="btn" href="#builder">Build my filing <span aria-hidden="true">→</span></a>

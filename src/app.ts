@@ -374,7 +374,7 @@ function renderSteps(): void {
     .forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.step))));
 }
 
-function go(next: number): void {
+function go(next: number, opts: { scroll?: boolean } = {}): void {
   step = Math.max(0, Math.min(TOTAL_STEPS - 1, next));
   document.querySelectorAll<HTMLElement>(".pane").forEach((p, i) => p.classList.toggle("on", i === step));
   document.querySelectorAll<HTMLButtonElement>("#steps button").forEach((b, i) => {
@@ -386,7 +386,15 @@ function go(next: number): void {
   const last = step === TOTAL_STEPS - 1;
   ($("#next") as HTMLButtonElement).textContent = last ? "Generate the filings" : "Continue →";
   if (step > 0) updatePreview();
-  $("#builder").scrollIntoView({ block: "start", behavior: "smooth" });
+  if (opts.scroll !== false) scrollToId("builder");
+}
+
+/** Scroll to a section, leaving room for the sticky masthead. */
+function scrollToId(id: string, behavior: ScrollBehavior = "smooth"): void {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - 64 - 12;
+  window.scrollTo({ top: Math.max(0, top), behavior });
 }
 
 const REQUIRED_BY_STEP: Record<number, string[]> = {
@@ -630,6 +638,97 @@ function countUp(): void {
   });
 }
 
+/** Honour #argument, #builder, #builder-3 and friends on load and on hashchange. */
+function handleHash(initial = false): void {
+  const raw = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+  if (!raw) {
+    if (initial) window.scrollTo(0, 0);
+    return;
+  }
+  const stepMatch = /^builder-(\d+)$/.exec(raw);
+  if (stepMatch) {
+    const n = Math.max(0, Math.min(TOTAL_STEPS - 1, Number(stepMatch[1])));
+    go(n, { scroll: false });
+    requestAnimationFrame(() => scrollToId("builder", initial ? "auto" : "smooth"));
+    return;
+  }
+  scrollToId(raw, initial ? "auto" : "smooth");
+}
+
+/** Underline the nav link for the section in view. */
+function spy(): void {
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".nav a[href^='#']:not(.cta)"));
+  const pairs = links
+    .map((a) => {
+      const el = document.querySelector<HTMLElement>(a.getAttribute("href") ?? "");
+      return el ? { link: a, el } : null;
+    })
+    .filter((x): x is { link: HTMLAnchorElement; el: HTMLElement } => x !== null);
+  if (pairs.length === 0) return;
+
+  let queued = false;
+  const paint = (): void => {
+    queued = false;
+    const line = window.scrollY + 120;
+    let current: HTMLAnchorElement | null = null;
+    for (const { link, el } of pairs) {
+      if (el.offsetTop <= line) current = link;
+    }
+    for (const { link } of pairs) {
+      link.setAttribute("aria-current", String(link === current));
+    }
+  };
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(paint);
+    },
+    { passive: true },
+  );
+  paint();
+}
+
+/** A hairline at the top that fills as the page is read. */
+function progressBar(): void {
+  const bar = document.getElementById("progress");
+  if (!bar) return;
+  let queued = false;
+  const paint = (): void => {
+    queued = false;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
+    bar.style.width = `${pct}%`;
+  };
+  window.addEventListener("scroll", () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(paint);
+  }, { passive: true });
+  paint();
+}
+
+/** Mobile menu: the nav links are hidden under 860px, so give them a toggle. */
+function mobileNav(): void {
+  const toggle = document.getElementById("nav-toggle");
+  const nav = document.getElementById("nav");
+  if (!toggle || !nav) return;
+  const setOpen = (open: boolean): void => {
+    toggle.setAttribute("aria-expanded", String(open));
+    nav.classList.toggle("open", open);
+    document.body.classList.toggle("nav-open", open);
+  };
+  toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+  nav.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 860) setOpen(false);
+  });
+}
+
 function observe(): void {
   const io = new IntersectionObserver(
     (entries) => {
@@ -734,6 +833,16 @@ function boot(): void {
   wireShare();
   renderEvidence();
 
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+    a.addEventListener("click", (ev) => {
+      const id = a.getAttribute("href")?.slice(1);
+      if (!id || !document.getElementById(id)) return;
+      ev.preventDefault();
+      history.pushState(null, "", `#${id}`);
+      scrollToId(id);
+    });
+  });
+
   $("#next").addEventListener("click", () => {
     if (!validateStep(step)) return;
     if (step === TOTAL_STEPS - 1) generate();
@@ -753,8 +862,19 @@ function boot(): void {
     window.location.reload();
   });
 
-  go(0);
+  go(0, { scroll: false });
   observe();
+  spy();
+  progressBar();
+  mobileNav();
+
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  handleHash(true);
+  if (!window.location.hash) {
+    window.scrollTo(0, 0);
+    window.addEventListener("load", () => window.scrollTo(0, 0), { once: true });
+  }
+  window.addEventListener("hashchange", () => handleHash(false));
 }
 
 if (document.readyState === "loading") {

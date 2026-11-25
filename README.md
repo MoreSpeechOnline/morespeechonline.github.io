@@ -131,6 +131,12 @@ indictment.
 Full treatment, with the adverse authority at full strength, is in
 [`docs/the-argument.md`](docs/the-argument.md).
 
+## Navigation and deep links
+
+The page opens at the top and remembers nothing about your last scroll. Sections
+are addressable: `#argument`, `#record`, `#defenses`, `#stakes`, `#letter`,
+`#builder`, and individual builder steps as `#builder-0` through `#builder-5`.
+
 ## Build
 
 Requires Node with TypeScript and esbuild available (`TSC` and `ESBUILD`
