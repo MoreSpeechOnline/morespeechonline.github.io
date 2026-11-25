@@ -93,7 +93,20 @@ for (const page of ["about.html", "code-of-ethics.html"]) {
   const first = src.indexOf("<style>");
   const close = src.indexOf("</style>", first);
   if (first === -1 || close === -1) continue;
-  const rebuilt = src.slice(0, first + 7) + minCss + src.slice(close);
+  let rebuilt = src.slice(0, first + 7) + minCss + src.slice(close);
+
+  // The masthead on these pages had no mobile menu button, so the nav simply vanished on a
+  // phone. Insert the same toggle the app page uses and a few lines to drive it.
+  if (!rebuilt.includes('id="nav-toggle"')) {
+    rebuilt = rebuilt.replace(
+      '<nav class="nav" aria-label="Sections">',
+      '<button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav"><span class="bars" aria-hidden="true"></span> Menu</button>\n    <nav class="nav" id="nav" aria-label="Sections">',
+    );
+    rebuilt = rebuilt.replace(
+      "</body>",
+      '<script>(function(){var t=document.getElementById("nav-toggle"),n=document.getElementById("nav");if(!t||!n)return;t.addEventListener("click",function(){var o=t.getAttribute("aria-expanded")==="true";t.setAttribute("aria-expanded",String(!o));n.classList.toggle("open",!o);document.body.classList.toggle("nav-open",!o);});n.querySelectorAll("a").forEach(function(a){a.addEventListener("click",function(){t.setAttribute("aria-expanded","false");n.classList.remove("open");document.body.classList.remove("nav-open");});});})();</script>\n</body>',
+    );
+  }
   writeFileSync(file, rebuilt);
 }
 rmSync(join(here, "dist"), { recursive: true, force: true });

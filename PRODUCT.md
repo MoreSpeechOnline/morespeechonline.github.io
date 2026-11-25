@@ -70,7 +70,7 @@ theory as plainly as its strengths.
 The name is **MoreSpeech**, from Brandeis's concurrence in *Whitney v.
 California*: "the remedy to be applied is more speech, not enforced silence."
 The tone is plain, direct, and unhedged, but never hype. The site is a project of
-the Voluntaryist Ministry. Gifts are called gifts, never donations. The entire
+the Voluntaryist Minister. Gifts are called gifts, never donations. The entire
 site was built by DeepSeek V4.1 Flash in omp.sh, and that is stated on the About
 page.
 

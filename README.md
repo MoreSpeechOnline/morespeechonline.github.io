@@ -25,9 +25,9 @@ assembled in your browser and never leave it.
 | [`docs/open-letter.md`](docs/open-letter.md) | The open letter to the Attorney General (generated from `src/letter.ts`) |
 | [`docs/filings/`](docs/filings/) | The pro se filing packet: complaint, summons, IFP, injunction, order, service, opposition |
 | [`src/`](src/) | TypeScript sources, styles, and the page template |
-| [`test/`](test/) | Headless Chrome tests: smoke, print, and the screenshot tour |
-| [`screenshots/`](screenshots/) | The tour, a gallery, and a contact sheet |
-| [`about.html`](about.html) | About page: the ministry, how to send a gift in Monero or X Cash, and how the site was built |
+| [`assets/`](assets/) | The Monero QR, the fonts, and the tax stamp that links to X from every page |
+| [`screenshots/`](screenshots/) | The tour, a gallery, and a contact sheet, regenerated after every visual change |
+| [`about.html`](about.html) | About page: the Voluntaryist Minister, where the site lives, how to send a gift in Monero or X Cash, and how it was built |
 | [`code-of-ethics.html`](code-of-ethics.html) | The Code of Ethics, as a page on the site (linked from every footer) |
 | [`CODE_OF_ETHICS.md`](CODE_OF_ETHICS.md) | The same text, in Markdown |
 | [`LICENSE`](LICENSE) | MIT |
@@ -222,7 +222,7 @@ or if you want it to keep helping other people, gifts can be sent two ways:
 Send to **@GodIsVoluntary** on X.
 
 The QR code encodes `monero:` followed by the address above, so a wallet can scan it
-directly. Gifts go to the Voluntaryist Ministry and support the hosting and upkeep of this
+directly. Gifts go to the Voluntaryist Minister and support the hosting and upkeep of this
 site. Nothing here is a charitable contribution for tax purposes, and nothing is
 owed — the letter, the argument, and the generator are free to use, copy, and
 fork without giving anything.

@@ -693,6 +693,25 @@ h2.section-title {
 .letter-encl h3 { margin-top: 0; }
 .letter-note { max-width: 68ch; margin: 20px auto 0; font-size: 12.5px; color: var(--muted); line-height: 1.55; }
 
+
+/* ---------- the tax stamp: fixed to the viewport, always in the corner ---------- */
+.tax-stamp {
+  position: fixed; left: 24px; bottom: 20px; z-index: 40;
+  display: block; width: clamp(96px, 11vw, 148px); height: auto;
+  transform: rotate(-7deg); transform-origin: bottom left;
+  opacity: .95;
+  filter: drop-shadow(0 3px 7px rgba(46,33,12,.28));
+  transition: transform .18s ease, opacity .18s ease;
+}
+.tax-stamp img { display: block; width: 100%; height: auto; }
+.tax-stamp:hover, .tax-stamp:focus-visible {
+  transform: rotate(-2deg) scale(1.05); opacity: 1;
+}
+@media (max-width: 780px) {
+  .tax-stamp { left: 12px; bottom: 12px; width: 84px; transform: rotate(-8deg); opacity: .9; }
+}
+@media print { .tax-stamp, .tax-stamp img { display: none !important; visibility: hidden !important; } }
+
 /* ---------- footer: the folder's back panel ---------- */
 footer {
   margin-top: 30px; padding: 40px 0 54px;
@@ -730,6 +749,7 @@ body::-webkit-scrollbar-thumb:hover { background: var(--stamp); }
   @page { size: letter; margin: 1in; }
   html, body { background: #fff !important; }
   body > *:not(#print-root) { display: none !important; }
+  .tax-stamp { display: none !important; }
   #print-root { display: block !important; }
   #print-root .doc { max-width: none; margin: 0; font-size: 12pt; line-height: 2; }
   #print-root .doc + .doc { break-before: page; page-break-before: always; }
@@ -751,18 +771,21 @@ body::-webkit-scrollbar-thumb:hover { background: var(--stamp); }
   body.printing-letter #letter .letter h3 { break-after: avoid; }
 }
 
-/* ---------- static pages: about, ethics ---------- */
+/* ---------- the document sheets: about, ethics ---------- */
+
 .doc-page {
+  position: relative;
   background: var(--sheet);
   border: 1px solid var(--rule);
+  border-radius: 2px;
   box-shadow: var(--shadow-sheet);
-  width: min(880px, calc(100% - 24px));
-  margin: 26px auto;
-  padding: 44px 52px 48px calc(52px + var(--punch));
-  position: relative;
+  width: min(800px, calc(100% - 24px));
+  margin: 26px auto 64px;
+  padding: 50px 54px 52px calc(52px + var(--punch));
 }
 .doc-page::before {
-  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--punch);
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0; width: var(--punch);
   background:
     radial-gradient(circle at 17px 96px, rgba(46,33,12,.28) 0 6px, transparent 6.5px),
     radial-gradient(circle at 17px 50%, rgba(46,33,12,.28) 0 6px, transparent 6.5px),
@@ -771,9 +794,110 @@ body::-webkit-scrollbar-thumb:hover { background: var(--stamp); }
   border-right: 1px dashed var(--rule-2);
   pointer-events: none;
 }
-@media (max-width: 780px) { .doc-page { padding: 28px 18px 30px calc(18px + 22px); } }
-.doc-page h2.page-title { font-family: var(--sans); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
-.doc-page h2 { font-family: var(--sans); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--rule); }
-.doc-page h3 { font-family: var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--stamp); }
-.doc-page .profile { border: 1px solid var(--ink); background: var(--sheet); }
-.doc-page .giftbox { border: 1px solid var(--ink); background: var(--sheet-2); }
+.doc-page::after {
+  content: attr(data-tab);
+  position: absolute; top: 26px; left: 100%; margin-left: 7px;
+  writing-mode: vertical-rl;
+  background: var(--tab); color: #f3f7fb;
+  font-family: var(--sans); font-weight: 700; font-size: 12.5px;
+  letter-spacing: .28em; text-transform: uppercase;
+  padding: 14px 8px; border-radius: 0 2px 2px 0;
+  box-shadow: 2px 0 8px -4px rgba(46,33,12,.6);
+}
+@media (max-width: 1000px) { .doc-page::after { display: none; } }
+
+.doc-page p { max-width: 66ch; }
+
+.doc-page .filestamp {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--muted);
+  margin: -6px 0 26px; padding-bottom: 11px; border-bottom: 1px solid var(--rule);
+  max-width: none;
+}
+.doc-page .filestamp span { color: var(--ink-2); letter-spacing: .01em; text-transform: none; }
+
+.doc-page h1.page-title {
+  font-family: var(--sans); font-weight: 700;
+  font-size: clamp(38px, 6vw, 60px); line-height: .94; letter-spacing: -.005em;
+  text-transform: uppercase; color: var(--ink);
+  margin: 0 0 18px;
+}
+.doc-page h2 {
+  max-width: none;
+  font-family: var(--sans); font-weight: 700; font-size: 21px; line-height: 1.15;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--ink);
+  margin: 42px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--rule);
+}
+.doc-page h3 {
+  font-family: var(--sans); font-weight: 700; font-size: 15.5px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--stamp); margin: 24px 0 8px;
+}
+.doc-page p { font-size: 17.5px; line-height: 1.66; color: var(--ink-2); margin: 0 0 15px; }
+.doc-page p.lede { font-size: 20px; line-height: 1.55; color: var(--ink); margin-bottom: 22px; }
+.doc-page a { color: var(--stamp); text-decoration-color: rgba(150,39,31,.45); }
+.doc-page a:hover { text-decoration-color: currentColor; }
+.doc-page strong { color: var(--ink); }
+
+.doc-page .doc-meta {
+  font-family: var(--mono); font-size: 12px; line-height: 1.7; color: var(--muted);
+  border-left: 2px solid var(--rule); padding: 2px 0 2px 12px; margin: 0 0 30px;
+}
+
+/* the index card inside the About sheet */
+.doc-page .profile {
+  position: relative; background: var(--sheet); border: 1px solid var(--ink);
+  padding: 26px 26px 20px; margin: 14px 0 14px;
+  box-shadow: 0 3px 10px -4px rgba(46,33,12,.35);
+}
+.doc-page .profile::after {
+  content: "Exhibit B"; position: absolute; top: -11px; left: 20px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+  background: var(--stamp); color: var(--sheet); padding: 3px 8px 2px;
+  transform: rotate(-1.5deg);
+}
+.doc-page .profile h3 { margin: 0 0 3px; font-size: 20px; color: var(--ink); text-transform: none; letter-spacing: -.01em; }
+.doc-page .profile .handle { display: block; font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 13px; }
+.doc-page .profile p { font-size: 16px; margin: 0 0 7px; }
+.doc-page .profile .verse { font-style: italic; }
+.doc-page .profile .place { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 12px; }
+
+/* the gift insert */
+.doc-page .giftbox {
+  display: grid; grid-template-columns: 172px 1fr; gap: 24px; align-items: start;
+  border: 1px solid var(--rule); background: var(--sheet-2); padding: 22px; margin: 8px 0 20px;
+}
+@media (max-width: 620px) { .doc-page .giftbox { grid-template-columns: 1fr; } }
+.doc-page .giftbox img { width: 172px; height: 172px; border: 1px solid var(--rule); background: #fff; padding: 6px; }
+.doc-page .giftbox h3 { margin: 0 0 8px; }
+.doc-page .giftbox p { font-size: 15px; margin: 0 0 8px; }
+.doc-page .addr {
+  font-family: var(--mono); font-size: 12px; line-height: 1.6; word-break: break-all;
+  background: #fff; border: 1px solid var(--rule); padding: 10px 11px; margin: 8px 0 14px;
+  user-select: all; color: var(--ink-2);
+}
+.doc-page .credit {
+  font-family: var(--mono); font-size: 12px; line-height: 1.65; color: var(--muted);
+  border-left: 2px solid var(--stamp); padding-left: 14px; margin-top: 34px;
+}
+
+/* the Rule: seventy-two items, set as the numbered column of a filing */
+.doc-page ol.rule {
+  max-width: none; columns: 2; column-gap: 46px; margin: 10px 0 26px; padding: 0;
+  list-style: none; counter-reset: rule;
+  font-size: 15.5px; line-height: 1.5; color: var(--ink-2);
+}
+.doc-page ol.rule li {
+  counter-increment: rule; position: relative; break-inside: avoid;
+  padding-left: 30px; margin: 0 0 9px;
+}
+.doc-page ol.rule li::before {
+  content: counter(rule) "."; position: absolute; left: 0;
+  font-family: var(--mono); font-size: 12px; color: var(--stamp);
+}
+@media (max-width: 700px) { .doc-page ol.rule { columns: 1; } }
+
+@media (max-width: 820px) {
+  .doc-page { padding: 38px 24px 42px calc(24px + var(--punch)); }
+  .doc-page p { font-size: 16.5px; }
+  .doc-page h1.page-title { font-size: clamp(32px, 9vw, 44px); }
+}
