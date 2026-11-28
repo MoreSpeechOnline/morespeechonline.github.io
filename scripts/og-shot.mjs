@@ -36,17 +36,29 @@ const MIME = {
 };
 
 const base = dirname(resolve(htmlPath));
-const html = readFileSync(htmlPath, "utf8").replace(
-  /(?:href|src)="(\.\.?\/[^"]+)"/g,
-  (match, ref) => {
-    const file = resolve(base, ref);
-    const mime = MIME[extname(file).toLowerCase()];
-    if (!mime) return match;
-    const attr = match.slice(0, match.indexOf("="));
-    const data = readFileSync(file).toString("base64");
-    return `${attr}="data:${mime};base64,${data}"`;
-  },
-);
+const inline = (ref) => {
+  const file = resolve(base, ref);
+  const mime = MIME[extname(file).toLowerCase()];
+  if (!mime) return null;
+  try {
+    return `data:${mime};base64,${readFileSync(file).toString("base64")}`;
+  } catch {
+    return null; // leave the reference alone; the layout guard will report the fallout
+  }
+};
+
+// Two shapes to catch: attributes (src=, href=) and CSS url(...) — the font is the
+// one that matters. Miss the url() form and Chrome silently falls back to a wider
+// face, the headline wraps, and the sheet overflows. That shipped once.
+const html = readFileSync(htmlPath, "utf8")
+  .replace(/(?:href|src)="(\.\.?\/[^"]+)"/g, (match, ref) => {
+    const data = inline(ref);
+    return data ? `${match.slice(0, match.indexOf("="))}="${data}"` : match;
+  })
+  .replace(/url\((["']?)(\.\.?\/[^"')]+)\1\)/g, (match, quote, ref) => {
+    const data = inline(ref);
+    return data ? `url("${data}")` : match;
+  });
 
 const tab = await (await fetch(`${CDP}/json/new?about:blank`, { method: "PUT" })).json();
 const ws = new WebSocket(tab.webSocketDebuggerUrl);
@@ -81,6 +93,36 @@ await send("Page.navigate", {
 // Fonts are the whole point of the card; wait for them, not for a stopwatch.
 await send("Runtime.evaluate", { awaitPromise: true, expression: "document.fonts.ready" });
 await new Promise((r) => setTimeout(r, 350));
+
+// Refuse to render a card whose type does not fit. This catches the failure that shipped
+// once: the webfont failed to inline, the headline wrapped to six lines, and the promise
+// line fell off the bottom of the sheet.
+const layout = await send("Runtime.evaluate", {
+  returnByValue: true,
+  expression: `(() => {
+    const sheet = document.querySelector(".sheet").getBoundingClientRect();
+    const blocks = [...document.querySelectorAll(".wordmark, h1, .rule, .sub, .foot")];
+    const problems = [];
+    for (const el of blocks) {
+      const b = el.getBoundingClientRect();
+      if (b.bottom > sheet.bottom - 8) problems.push((el.className || el.tagName) + " overflows the sheet");
+      if (b.right > sheet.right - 8) problems.push((el.className || el.tagName) + " overruns the sheet");
+    }
+    const h1 = document.querySelector("h1");
+    const lh = parseFloat(getComputedStyle(h1).lineHeight);
+    for (const span of h1.children) {
+      const r = span.getBoundingClientRect();
+      if (r.height > lh * 1.35) problems.push("headline line wrapped: " + span.textContent);
+    }
+    return JSON.stringify(problems);
+  })()`,
+});
+const problems = JSON.parse(layout.result.value || "[]");
+if (problems.length) {
+  console.error("layout guard failed:\n  " + problems.join("\n  "));
+  ws.close();
+  process.exit(1);
+}
 
 const { data } = await send("Page.captureScreenshot", {
   format: "png",
