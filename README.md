@@ -1,4 +1,4 @@
-# MoreSpeech
+<img src="assets/og-1200x630.png" alt="MoreSpeech — the comment section is a public forum" width="100%">
 
 **The comment section is a public forum.**
 
@@ -266,6 +266,8 @@ Paste a URL from this site into a post and X shows a large-image card. The tags
 are in the head of every page, and the image is `assets/og-1200x630.png` — the
 manila board with the headline sheet and the stamp, drawn at 1200×630 (X's
 `summary_large_image` size, 1.91:1, well under the 5 MB ceiling).
+
+The same image heads this README.
 
 The image is rendered from `src/og.html`, which is plain HTML at that size:
 
