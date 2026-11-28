@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MoreSpeech — link card</title>
+<style>
+  @font-face {
+    font-family: "Barlow Condensed";
+    font-weight: 700;
+    src: url("../assets/fonts/barlow-condensed-700-latin.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Barlow Condensed";
+    font-weight: 400;
+    src: url("../assets/fonts/barlow-condensed-400-latin.woff2") format("woff2");
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    font-family: Georgia, "Iowan Old Style", serif;
+    background:
+      radial-gradient(900px 520px at 8% -10%, rgba(255,247,229,.75), transparent 60%),
+      radial-gradient(700px 480px at 102% 8%, rgba(120,95,52,.18), transparent 62%),
+      #d8c49b;
+    color: #17140f;
+    position: relative;
+  }
+
+  /* the board's edge: a thin frame, so the crop never looks accidental */
+  .frame { position: absolute; inset: 14px; border: 1px solid rgba(46,33,12,.28); }
+
+  /* the sheet, tilted the way a file left on a desk sits */
+  .sheet {
+    position: absolute; left: 74px; top: 84px; width: 700px; height: 462px;
+    background: #fdfaf2;
+    border: 1px solid #cbbca0;
+    box-shadow: 0 18px 40px -22px rgba(46,33,12,.65);
+    transform: rotate(-1.4deg);
+    padding: 46px 48px 40px 66px;
+  }
+  .sheet::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 30px;
+    border-right: 1px dashed #d8cbb2;
+    background:
+      radial-gradient(circle at 15px 70px, rgba(46,33,12,.3) 0 5px, transparent 5.5px),
+      radial-gradient(circle at 15px 50%, rgba(46,33,12,.3) 0 5px, transparent 5.5px),
+      radial-gradient(circle at 15px calc(100% - 70px), rgba(46,33,12,.3) 0 5px, transparent 5.5px);
+  }
+  .tab {
+    position: absolute; top: 30px; left: 100%; margin-left: 6px;
+    writing-mode: vertical-rl;
+    background: #2d4a6b; color: #f3f7fb;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 15px; letter-spacing: .3em; text-transform: uppercase;
+    padding: 16px 9px 16px 8px; border-radius: 0 2px 2px 0;
+  }
+
+  .wordmark {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 26px; letter-spacing: .34em; text-transform: uppercase; color: #96271f;
+  }
+  .wordmark em { font-style: normal; color: #17140f; }
+
+  h1 {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 104px; line-height: .88; letter-spacing: .005em;
+    text-transform: uppercase; margin: 26px 0 0;
+  }
+  h1 span { display: block; }
+  h1 span:nth-child(3) { color: #96271f; }
+
+  .rule { width: 96px; height: 6px; background: #96271f; margin: 22px 0 18px; }
+
+  .sub {
+    font-size: 21px; line-height: 1.38; color: #3b3327; max-width: 560px;
+  }
+
+  .foot {
+    position: absolute; left: 66px; bottom: 34px;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 17px; letter-spacing: .22em; text-transform: uppercase; color: #6b5a3c;
+  }
+
+  /* the stamp, on the desk rather than on the sheet */
+  .stamp {
+    position: absolute; right: 96px; bottom: 78px; width: 236px;
+    transform: rotate(-8deg);
+    filter: drop-shadow(0 6px 12px rgba(46,33,12,.3));
+  }
+
+  /* a second sheet edge, half under the first, to read as a stack */
+  .under {
+    position: absolute; left: 96px; top: 118px; width: 700px; height: 462px;
+    background: #f2ebd9; border: 1px solid #cbbca0;
+    transform: rotate(1.1deg);
+    box-shadow: 0 14px 30px -24px rgba(46,33,12,.6);
+  }
+</style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="under"></div>
+
+  <div class="sheet">
+    <div class="tab">Matter 24-0412</div>
+    <div class="wordmark">More<em>Speech</em></div>
+    <h1><span>The comment</span><span>section is a</span><span>public forum.</span></h1>
+    <div class="rule"></div>
+    <p class="sub">What the law says about federal officials who block constituents — and the filings to serve when it happens to you.</p>
+    <div class="foot">Free · No account · Nothing leaves your browser</div>
+  </div>
+
+  <img class="stamp" src="../assets/tax-stamp.png" alt="">
+</body>
+</html>

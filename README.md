@@ -259,3 +259,20 @@ This is an educational tool. It assembles documents from a template and the
 facts you enter; it does not evaluate your case, and no attorney has reviewed
 your situation. If you can get a lawyer — legal aid, a law school clinic, a
 volunteer lawyers' project — do that instead.
+
+## Link cards
+
+Paste a URL from this site into a post and X shows a large-image card. The tags
+are in the head of every page, and the image is `assets/og-1200x630.png` — the
+manila board with the headline sheet and the stamp, drawn at 1200×630 (X's
+`summary_large_image` size, 1.91:1, well under the 5 MB ceiling).
+
+The image is rendered from `src/og.html`, which is plain HTML at that size:
+
+    # in a browser sandbox with Chrome, at 1200×630, device scale 2
+    # then downsample the capture to 1200×630
+    node scripts/og-shot.mjs src/og.html assets/og-1200x630.png
+
+`og:image` must be an absolute URL, so it points at the GitHub Pages host, which
+serves today. If `morespeech.online` ever resolves, change the two URLs in the
+head of each page and regenerate the image with the new domain on it.
