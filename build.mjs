@@ -15,6 +15,7 @@ import { mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { pathToFileURL, fileURLToPath } from "node:url";
+import { fillEmbeds } from "./scripts/x-embed.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const tsc = process.env.TSC ?? join(here, "node_modules", ".bin", "tsc");
@@ -80,7 +81,7 @@ console.log(`wrote docs/open-letter.md (${md.split("\n").length} lines)`);
 const template = readFileSync(join(here, "src", "index.template.html"), "utf8");
 
 const html = minifyHtml(
-  template.replace("/*__CSS__*/", () => minCss).replace("/*__JS__*/", () => js),
+  fillEmbeds(template.replace("/*__CSS__*/", () => minCss).replace("/*__JS__*/", () => js)),
 );
 mkdirSync(here, { recursive: true });
 writeFileSync(join(here, "index.html"), html);
@@ -93,7 +94,7 @@ for (const page of ["about.html", "code-of-ethics.html"]) {
   const first = src.indexOf("<style>");
   const close = src.indexOf("</style>", first);
   if (first === -1 || close === -1) continue;
-  let rebuilt = src.slice(0, first + 7) + minCss + src.slice(close);
+  let rebuilt = fillEmbeds(src.slice(0, first + 7) + minCss + src.slice(close));
 
   // The masthead on these pages had no mobile menu button, so the nav simply vanished on a
   // phone. Insert the same toggle the app page uses and a few lines to drive it.

@@ -48,5 +48,18 @@ for (const [file, name] of [
   const { data } = await send("Page.captureScreenshot", { format: "png" });
   writeFileSync(join(outDir, `${name}.png`), Buffer.from(data, "base64"));
   console.log("captured", name);
+
+  // The embedded post sits below the fold; give it its own frame.
+  const hasEmbed = await send("Runtime.evaluate", {
+    returnByValue: true,
+    expression: `(() => { const el = document.querySelector(".x-embed"); if (!el) return false;
+      el.scrollIntoView({ block: "center" }); return true; })()`,
+  });
+  if (hasEmbed.result.value) {
+    await new Promise((r) => setTimeout(r, 500));
+    const shot = await send("Page.captureScreenshot", { format: "png" });
+    writeFileSync(join(outDir, `${name.replace("about", "embed")}.png`), Buffer.from(shot.data, "base64"));
+    console.log("captured", name.replace("about", "embed"));
+  }
 }
 ws.close();

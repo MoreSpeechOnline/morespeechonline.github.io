@@ -13,6 +13,12 @@ served from GitHub Pages at
 No backend. No analytics. No network requests at runtime. The filings are
 assembled in your browser and never leave it.
 
+That rule holds for the embedded posts too. X's own embed pulls
+`platform.twitter.com/widgets.js` and an iframe; this site fetches a post once
+at build time (`node scripts/x-embed.mjs add <url>`), stores its text, counts
+and avatar in `src/embeds.json`, and renders the card as plain HTML with the
+avatar inlined. Nothing is requested from X when a reader opens the page.
+
 ---
 
 ## Contents
@@ -26,6 +32,7 @@ assembled in your browser and never leave it.
 | [`docs/filings/`](docs/filings/) | The pro se filing packet: complaint, summons, IFP, injunction, order, service, opposition |
 | [`src/`](src/) | TypeScript sources, styles, and the page template |
 | [`assets/`](assets/) | The Monero QR, the fonts, and the tax stamp that links to X from every page |
+| [`scripts/x-embed.mjs`](scripts/x-embed.mjs) | Fetches a post from X once, at build time, and renders it as a self-contained card |
 | [`screenshots/`](screenshots/) | The tour, a gallery, and a contact sheet, regenerated after every visual change |
 | [`about.html`](about.html) | About page: the Voluntaryist Minister, where the site lives, how to send a gift in Monero or X Cash, and how it was built |
 | [`code-of-ethics.html`](code-of-ethics.html) | The Code of Ethics, as a page on the site (linked from every footer) |
